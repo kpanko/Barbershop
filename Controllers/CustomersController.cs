@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using Barbershop.DAL;
 using Barbershop.Models;
@@ -18,7 +16,14 @@ namespace Barbershop.Controllers
         // GET: Customers
         public ActionResult Index()
         {
-            return View(db.Customers.ToList());
+            // Show a list of all the unserved customers
+            // in order by who arrived first
+            //
+            var waitingCustomers = db.Customers
+                .Where(c => c.served == false)
+                .OrderBy(c => c.ArrivalTime);
+
+            return View(waitingCustomers.ToList());
         }
 
         // GET: Customers/Details/5
@@ -78,11 +83,9 @@ namespace Barbershop.Controllers
         }
 
         // POST: Customers/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,LastName,FirstName,ArrivalTime,served")] Customer customer)
+        public ActionResult Edit([Bind(Include = "LastName,FirstName,PhoneNumber")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -93,29 +96,24 @@ namespace Barbershop.Controllers
             return View(customer);
         }
 
-        // GET: Customers/Delete/5
-        public ActionResult Delete(int? id)
+        // GET: Customers/InChair/5
+        public ActionResult InChair(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Customer customer = db.Customers.Find(id);
+
             if (customer == null)
             {
                 return HttpNotFound();
             }
-            return View(customer);
-        }
 
-        // POST: Customers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Customer customer = db.Customers.Find(id);
-            db.Customers.Remove(customer);
+            customer.served = true;
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 

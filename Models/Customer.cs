@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace Barbershop.Models
 {
@@ -22,6 +20,11 @@ namespace Barbershop.Models
         public string FirstName { get; set; }
 
         /// <summary>
+        /// The person's phone number
+        /// </summary>
+        public string PhoneNumber { get; set; }
+
+        /// <summary>
         /// Represents when they arrived and began waiting
         /// </summary>
         public DateTime ArrivalTime { get; set; }
@@ -35,6 +38,7 @@ namespace Barbershop.Models
         /// references the Barber this person is waiting for;
         /// null if anybody is fine
         /// </summary>
-        public Barber PreferredBarber { get; set; }
+        [Display(Name="Preferred Barber")]
+        public virtual Barber PreferredBarber { get; set; }
     }
 }

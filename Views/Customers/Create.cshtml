@@ -1,10 +1,10 @@
 ﻿@model Barbershop.Models.Customer
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Add New Customer";
 }
 
-<h2>Create</h2>
+<h2>Add New Customer</h2>
 
 
 @using (Html.BeginForm()) 
@@ -28,6 +28,14 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PreferredBarber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("PreferredBarber", new SelectList(new List<string>() { "Anybody", "Joe", "Gary" }),
+                    "Select Preferred Barber", new { @class = "form-control" })
             </div>
         </div>
 

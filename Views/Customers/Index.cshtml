@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<Barbershop.Models.Customer>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Waiting Customers";
 }
 
-<h2>Index</h2>
+<h2>Waiting Customers</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New Customer", "Create")
 </p>
 <table class="table">
     <tr>
@@ -21,7 +21,7 @@
             @Html.DisplayNameFor(model => model.ArrivalTime)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.served)
+            @Html.DisplayNameFor(model => model.PreferredBarber)
         </th>
         <th></th>
     </tr>
@@ -38,12 +38,19 @@
             @Html.DisplayFor(modelItem => item.ArrivalTime)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.served)
+            @if (item.PreferredBarber != null)
+            {
+                @Html.DisplayFor(modelItem => item.PreferredBarber.Name )
+            }
+            else
+            {
+                @:Anybody
+            }
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
             @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+            @Html.ActionLink("In Chair", "InChair", new { id=item.ID })
         </td>
     </tr>
 }
