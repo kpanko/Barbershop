@@ -11,11 +11,19 @@ namespace Barbershop.Controllers
 {
     public class CustomersController : Controller
     {
-        private BarberShopContext db = new BarberShopContext();
+        private readonly BarberShopContext db = new BarberShopContext();
 
         // GET: Customers
-        public ActionResult Index()
+        public ActionResult Index(string PhoneNumber)
         {
+            // If user has put in a phone number, look that user up
+            //
+            if(! string.IsNullOrWhiteSpace(PhoneNumber)) {
+                var user = db.Customers.Where(c => c.PhoneNumber == PhoneNumber).FirstOrDefault();
+
+                return RedirectToAction("Details", new { user.ID });
+            }
+
             // Show a list of all the unserved customers
             // in order by who arrived first
             //
@@ -50,7 +58,9 @@ namespace Barbershop.Controllers
         // POST: Customers/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "LastName,FirstName")] Customer customer)
+        public ActionResult Create(
+            [Bind(Include = "LastName,FirstName,PhoneNumber")] Customer customer,
+            string preferredBarber)
         {
             if (ModelState.IsValid)
             {
@@ -58,6 +68,22 @@ namespace Barbershop.Controllers
                 //
                 customer.ArrivalTime = DateTime.Now;
                 customer.served = false;
+
+                // Hardcoding barbers' names is not ideal but it works for now
+                // TODO: we can remove this by looping over all barbers and checking if any match
+                //
+
+                var joe = db.Barbers.Where(b => b.Name.Equals("Joe")).FirstOrDefault();
+                var gary = db.Barbers.Where(b => b.Name.Equals("Gary")).FirstOrDefault();
+
+                if(string.Equals(preferredBarber, "Joe"))
+                {
+                    customer.PreferredBarber = joe;
+                }
+                else if(string.Equals(preferredBarber, "Gary"))
+                {
+                    customer.PreferredBarber = gary;
+                }
 
                 db.Customers.Add(customer);
                 db.SaveChanges();
