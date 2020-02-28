@@ -23,6 +23,9 @@
         <th>
             @Html.DisplayNameFor(model => model.PreferredBarber)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.waitTime)
+        </th>
         <th></th>
     </tr>
 
@@ -46,6 +49,9 @@
             {
                 @:Anybody
             }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.waitTime)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |

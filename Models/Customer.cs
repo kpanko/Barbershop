@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Barbershop.Models
 {
@@ -40,5 +41,12 @@ namespace Barbershop.Models
         /// </summary>
         [Display(Name="Preferred Barber")]
         public virtual Barber PreferredBarber { get; set; }
+
+        /// <summary>
+        /// Wait time
+        /// </summary>
+        [Display(Name ="Wait Time")]
+        [NotMapped]
+        public string waitTime { get; set; }
     }
 }

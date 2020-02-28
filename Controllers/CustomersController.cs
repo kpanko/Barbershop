@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -29,9 +30,31 @@ namespace Barbershop.Controllers
             //
             var waitingCustomers = db.Customers
                 .Where(c => c.served == false)
-                .OrderBy(c => c.ArrivalTime);
+                .OrderBy(c => c.ArrivalTime)
+                .ToList();
 
-            return View(waitingCustomers.ToList());
+            AddWaitTimes(waitingCustomers);
+
+            return View(waitingCustomers);
+        }
+
+        private void AddWaitTimes(List<Customer> waitingCustomers)
+        {
+            int waitTime = 0;
+
+            foreach (var cust in waitingCustomers)
+            {
+                if(waitTime == 0)
+                {
+                    cust.waitTime = "No wait";
+                }
+                else
+                {
+                    cust.waitTime = string.Format("{0} minutes", waitTime);
+                }
+
+                waitTime += 15;
+            }
         }
 
         // GET: Customers/Details/5
@@ -69,20 +92,14 @@ namespace Barbershop.Controllers
                 customer.ArrivalTime = DateTime.Now;
                 customer.served = false;
 
-                // Hardcoding barbers' names is not ideal but it works for now
-                // TODO: we can remove this by looping over all barbers and checking if any match
-                //
+                var barbers = db.Barbers.ToList();
 
-                var joe = db.Barbers.Where(b => b.Name.Equals("Joe")).FirstOrDefault();
-                var gary = db.Barbers.Where(b => b.Name.Equals("Gary")).FirstOrDefault();
-
-                if(string.Equals(preferredBarber, "Joe"))
+                foreach (var barber in barbers)
                 {
-                    customer.PreferredBarber = joe;
-                }
-                else if(string.Equals(preferredBarber, "Gary"))
-                {
-                    customer.PreferredBarber = gary;
+                    if(string.Equals(preferredBarber, barber.Name))
+                    {
+                        customer.PreferredBarber = barber;
+                    }
                 }
 
                 db.Customers.Add(customer);
